@@ -2,10 +2,431 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Simple HTML Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DietCheck - NVIDIA G-Assist Plugin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is a simple HTML file.</p>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <i class="fas fa-utensils"></i>
+                <span>DietCheck</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#setup">Setup</a>
+                <a href="#examples">Examples</a>
+                <a href="https://github.com/cindyhuen/DietCheck" class="btn-primary">
+                    <i class="fab fa-github"></i> Get Started
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Smart Diet Checking with <span class="highlight">AI Power</span></h1>
+                    <p class="hero-subtitle">
+                        Instantly check if any food fits your personal dietary needs with this powerful NVIDIA G-Assist plugin. 
+                        Get clear safety indicators and detailed nutrition information from the world's largest food database.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="https://github.com/cindyhuen/DietCheck" class="btn-primary large">
+                            <i class="fab fa-github"></i> Download Plugin
+                        </a>
+                        <a href="#demo" class="btn-secondary large">
+                            <i class="fas fa-play"></i> See Demo
+                        </a>
+                    </div>
+                    <div class="badges">
+                        <span class="badge">✅ Windows Compatible</span>
+                        <span class="badge">🤖 AI Powered</span>
+                        <span class="badge">🌍 Global Food Database</span>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="demo-card">
+                        <div class="demo-header">
+                            <i class="fas fa-robot"></i>
+                            <span>NVIDIA G-Assist</span>
+                        </div>
+                        <div class="demo-content">
+                            <div class="chat-message user">
+                                <span>"Find safe bread options for my diet"</span>
+                            </div>
+                            <div class="chat-message assistant">
+                                <div class="food-result safe">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div>
+                                        <strong>Whole Wheat Bread</strong>
+                                        <span>✅ SAFE - No allergens detected</span>
+                                    </div>
+                                </div>
+                                <div class="food-result caution">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <div>
+                                        <strong>White Bread</strong>
+                                        <span>⚠️ CAUTION - Contains gluten</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Powerful Features for Smart Food Choices</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Smart Food Search</h3>
+                    <p>Search for food products by name and get instant results from the Open Food Facts database with over 2.8 million products.</p>
+                </div>
+                
+                <div class="feature-card highlight-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Safe Food Filter</h3>
+                    <p>NEW: Search ONLY safe foods that meet ALL your dietary requirements. No more scrolling through incompatible options!</p>
+                    <div class="feature-badge">NEW</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h3>Personal Profile System</h3>
+                    <p>Set your allergies, intolerances, and dietary preferences once. Your profile is automatically applied to all searches.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Detailed Nutrition Info</h3>
+                    <p>Get comprehensive nutritional breakdowns including calories, macros, salt, sugar, and fiber content per 100g.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3>Barcode Lookup</h3>
+                    <p>Look up products by barcode for precise information. Perfect for grocery shopping and meal planning.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Safety Indicators</h3>
+                    <p>Clear visual indicators: ✅ SAFE, ⚠️ CAUTION, ❌ NOT SAFE based on your personal dietary profile.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile System Section -->
+    <section class="profile-system">
+        <div class="container">
+            <div class="profile-content">
+                <div class="profile-text">
+                    <h2>🔐 Enhanced Personal Dietary Profile System</h2>
+                    <div class="profile-features">
+                        <div class="profile-feature">
+                            <i class="fas fa-cog"></i>
+                            <div>
+                                <strong>Set once, use everywhere</strong>
+                                <span>Configure your profile once and it's automatically applied to all searches</span>
+                            </div>
+                        </div>
+                        <div class="profile-feature">
+                            <i class="fas fa-save"></i>
+                            <div>
+                                <strong>Persistent storage</strong>
+                                <span>Your profile is saved and loaded automatically every time</span>
+                            </div>
+                        </div>
+                        <div class="profile-feature">
+                            <i class="fas fa-list-ul"></i>
+                            <div>
+                                <strong>Comprehensive settings</strong>
+                                <span>Allergies, intolerances, medical conditions, dietary preferences</span>
+                            </div>
+                        </div>
+                        <div class="profile-feature">
+                            <i class="fas fa-sliders-h"></i>
+                            <div>
+                                <strong>Custom nutrient limits</strong>
+                                <span>Set personalized limits for sugar, salt, fat, and more</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-demo">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Example Profile Setup</span>
+                            <i class="fas fa-copy"></i>
+                        </div>
+                        <pre><code>{
+  "profile_name": "My Dietary Profile",
+  "allergies": ["milk", "nuts", "soy"],
+  "intolerances": ["gluten", "lactose"],
+  "dietary_preferences": {
+    "vegan": true,
+    "low_sugar": true,
+    "low_salt": false
+  },
+  "medical_conditions": ["diabetes"],
+  "nutrient_limits": {
+    "sugars_100g": 5,
+    "salt_100g": 0.3
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section id="examples" class="examples">
+        <div class="container">
+            <h2>See DietCheck in Action</h2>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-header">
+                        <i class="fas fa-search"></i>
+                        <span>Basic Search</span>
+                    </div>
+                    <div class="example-content">
+                        <div class="query">Ask G-Assist: "Search for pizza products"</div>
+                        <div class="result">
+                            <div class="food-item safe">
+                                <span class="status">✅</span>
+                                <div>
+                                    <strong>Margherita Pizza</strong>
+                                    <small>SAFE - No dietary conflicts</small>
+                                </div>
+                            </div>
+                            <div class="food-item warning">
+                                <span class="status">⚠️</span>
+                                <div>
+                                    <strong>Pepperoni Pizza</strong>
+                                    <small>CAUTION - High in saturated fat</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Safe Food Only</span>
+                    </div>
+                    <div class="example-content">
+                        <div class="query">Ask G-Assist: "Find safe breakfast cereals"</div>
+                        <div class="result">
+                            <div class="food-item safe">
+                                <span class="status">✅</span>
+                                <div>
+                                    <strong>Oat Bran Cereal</strong>
+                                    <small>Perfect for your dietary needs</small>
+                                </div>
+                            </div>
+                            <div class="food-item safe">
+                                <span class="status">✅</span>
+                                <div>
+                                    <strong>Rice Puffs</strong>
+                                    <small>Gluten-free and low sugar</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Nutrition Details</span>
+                    </div>
+                    <div class="example-content">
+                        <div class="query">Ask G-Assist: "Get nutrition for barcode 737628064502"</div>
+                        <div class="result">
+                            <div class="nutrition-grid">
+                                <div class="nutrition-item">
+                                    <strong>Energy</strong>
+                                    <span>139 kcal</span>
+                                </div>
+                                <div class="nutrition-item">
+                                    <strong>Fat</strong>
+                                    <span>0g</span>
+                                </div>
+                                <div class="nutrition-item">
+                                    <strong>Sugar</strong>
+                                    <span>10.6g</span>
+                                </div>
+                                <div class="nutrition-item">
+                                    <strong>Protein</strong>
+                                    <span>0g</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Setup Section -->
+    <section id="setup" class="setup">
+        <div class="container">
+            <h2>Quick Setup Guide</h2>
+            <div class="setup-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>📥 Get the Files</h3>
+                        <div class="code-snippet">
+                            <code>git clone https://github.com/cindyhuen/DietCheck.git</code>
+                            <button class="copy-btn" onclick="copyToClipboard(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>⚙️ Setup and Build</h3>
+                        <div class="code-snippet">
+                            <code>.\setup.bat && .\build.bat</code>
+                            <button class="copy-btn" onclick="copyToClipboard(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>📦 Install Plugin</h3>
+                        <p>Copy the <code>dist/dietcheck</code> folder to:</p>
+                        <div class="code-snippet">
+                            <code>%PROGRAMDATA%\NVIDIA Corporation\nvtopps\rise\plugins</code>
+                            <button class="copy-btn" onclick="copyToClipboard(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="requirements">
+                <h3>🛠️ Requirements</h3>
+                <div class="req-grid">
+                    <div class="req-item">
+                        <i class="fab fa-windows"></i>
+                        <span>Windows PC</span>
+                    </div>
+                    <div class="req-item">
+                        <i class="fab fa-python"></i>
+                        <span>Python 3.6+</span>
+                    </div>
+                    <div class="req-item">
+                        <i class="fas fa-robot"></i>
+                        <span>NVIDIA G-Assist</span>
+                    </div>
+                    <div class="req-item">
+                        <i class="fas fa-wifi"></i>
+                        <span>Internet Connection</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Smart Diet Checking?</h2>
+                <p>Join the community and take control of your dietary choices with AI-powered assistance.</p>
+                <div class="cta-buttons">
+                    <a href="https://github.com/cindyhuen/DietCheck" class="btn-primary large">
+                        <i class="fab fa-github"></i> Get Started Now
+                    </a>
+                    <a href="https://github.com/cindyhuen/DietCheck/blob/main/test-script.md" class="btn-secondary large">
+                        <i class="fas fa-vial"></i> Try Test Script
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-utensils"></i>
+                    <span>DietCheck</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/cindyhuen/DietCheck">GitHub</a>
+                    <a href="https://github.com/cindyhuen/DietCheck/blob/main/README.md">Documentation</a>
+                    <a href="https://github.com/cindyhuen/DietCheck/issues">Support</a>
+                </div>
+                <div class="footer-text">
+                    <p>Powered by NVIDIA G-Assist • Data from Open Food Facts</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyToClipboard(button) {
+            const code = button.previousElementSibling;
+            navigator.clipboard.writeText(code.textContent);
+            
+            const originalIcon = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.style.color = '#10b981';
+            
+            setTimeout(() => {
+                button.innerHTML = originalIcon;
+                button.style.color = '';
+            }, 2000);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
