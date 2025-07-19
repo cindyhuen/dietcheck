@@ -126,7 +126,7 @@ body {
 
 /* Hero Section */
 .hero {
-    padding: 120px 120px 80px;
+    padding: 40px 120px 80px;
     background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
     overflow: hidden;
 }
@@ -298,8 +298,66 @@ body {
 }
 
 /* Section Styles */
-.features, .user-types, .profile-system, .examples, .tech-specs, .cta, .setup {
+.features, .user-types, .profile-system, .examples, .tech-specs, .cta, .setup, .video-demo {
     padding: 5rem 5rem;
+}
+
+/* Video Demo Section */
+.video-demo {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    text-align: center;
+}
+
+.video-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    margin: 2rem 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 16px;
+}
+
+.video-container video {
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.video-container video:hover {
+    transform: scale(1.02);
+}
+
+.video-caption {
+    font-size: 1.1rem;
+    color: #666;
+    margin-top: 1.5rem;
+    font-style: italic;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .features {
@@ -1068,6 +1126,22 @@ body {
     .hero-subtitle { font-size: 1.2rem; }
     .profile-content { grid-template-columns: 1fr; gap: 3rem; }
     .specs-grid, .footer-content { grid-template-columns: repeat(2, 1fr); }
+    
+    /* Video Demo Tablet Styles */
+    .video-demo { 
+        padding: 4rem 2rem; 
+    }
+    .video-wrapper {
+        max-width: 800px;
+        padding: 0 1rem;
+    }
+    .video-container {
+        margin: 2rem 0;
+        border-radius: 14px;
+    }
+    .video-container iframe {
+        border-radius: 14px;
+    }
 }
 
 @media (max-width: 767px) {
@@ -1085,6 +1159,28 @@ body {
     .footer-content { grid-template-columns: 1fr; text-align: center; }
     .setup-steps .step { flex-direction: column; text-align: center; gap: 1rem; }
     .req-grid { grid-template-columns: 1fr; }
+    
+    /* Video Demo Mobile Styles */
+    .video-demo { 
+        padding: 3rem 1rem; 
+    }
+    .video-wrapper {
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+    .video-container {
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .video-container iframe {
+        border-radius: 12px;
+    }
+    .video-caption { 
+        font-size: 1rem; 
+        padding: 0 1rem;
+        margin-top: 1rem;
+    }
 }
 
 @media (max-width: 575px) {
