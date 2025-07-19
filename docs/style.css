@@ -590,7 +590,12 @@ body {
     align-self: flex-end;
 }
 
-.query-box, .result-box {
+.query-box {
+    display: flex;
+    padding-top: 0rem;
+}
+
+.result-box {
     display: flex;
     padding-top: 1.5rem;
 }
