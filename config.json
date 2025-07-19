@@ -1,0 +1,5 @@
+{
+  "description": "DietCheck Plugin Configuration",
+  "version": "1.0.0",
+  "note": "This plugin does not require external configuration. User preferences are stored in the user profile system."
+}
