@@ -96,7 +96,31 @@
                  <h2 class="section-title">Video</h2>
             <div class="video-wrapper">
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/TCRuD-p8Hsg?si=V70r1hMIFxseEirU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/mH18pOBpliY?si=7HYd17QibVz3Robw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div style="text-align:center; margin-top:1.5em; padding:1rem; background:#f8f9fa; border-radius:8px; border:1px solid #e1e5e9;">
+                    <div style="margin-bottom:1em;">
+                        <i class="fab fa-youtube" style="color:#ff0000; font-size:1.2em; margin-right:0.5em;"></i>
+                        <strong style="color:#333;">Can't see the video?</strong>
+                    </div>
+                    <div style="margin-bottom:1em;">
+                        <a href="https://youtu.be/mH18pOBpliY" target="_blank" rel="noopener" 
+                           style="display:inline-block; padding:10px 20px; background:#2c3e50; color:white; text-decoration:none; border-radius:6px; font-weight:500; border:2px solid #34495e; transition:all 0.2s;" 
+                           onmouseover="this.style.background='#34495e'; this.style.borderColor='#4a5f7a';" 
+                           onmouseout="this.style.background='#2c3e50'; this.style.borderColor='#34495e';">
+                            <i class="fab fa-youtube" style="margin-right:0.5em; color:#e74c3c;"></i>Watch on YouTube
+                        </a>
+                    </div>
+                    <div style="background:white; padding:0.75rem; border-radius:4px; border:1px solid #ddd; display:inline-block; margin-top:0.5em;">
+                        <div style="font-size:0.9em; color:#666; margin-bottom:0.25em;">Direct Link:</div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <code style="background:#f5f5f5; padding:4px 8px; border-radius:3px; font-size:0.85em; color:#333;">https://youtu.be/mH18pOBpliY</code>
+                            <button onclick="navigator.clipboard.writeText('https://youtu.be/mH18pOBpliY'); this.innerHTML='✓ Copied!'; this.style.background='#28a745'; setTimeout(()=>{this.innerHTML='<i class=\'fas fa-copy\'></i> Copy'; this.style.background='#007bff';}, 2000);" 
+                                    style="padding:4px 8px; font-size:0.8em; border:none; border-radius:3px; background:#007bff; color:white; cursor:pointer; transition:background 0.2s;">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
