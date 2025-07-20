@@ -1,0 +1,77 @@
+{
+  "manifestVersion": 1,
+  "executable": "./dietcheck-plugin.exe",
+  "persistent": true,
+  "passthrough": false,
+  "functions": [
+    {
+      "name": "search_food_product",
+      "description": "Searches for food products by name using the Open Food Facts database. Results are filtered based on user's dietary profile if set.",
+      "tags": ["food", "nutrition", "search", "calories"],
+      "properties": {
+        "product_name": {
+          "type": "string",
+          "description": "The name of the food product to search for (e.g., 'coca cola', 'banana', 'pizza')."
+        }
+      }
+    },
+    {
+      "name": "get_product_nutrition",
+      "description": "Gets detailed nutritional information for a specific product using its barcode. Includes safety analysis based on user's dietary profile if set.",
+      "tags": ["nutrition", "barcode", "calories", "macros"],
+      "properties": {
+        "barcode": {
+          "type": "string",
+          "description": "The barcode number of the product to get nutritional information for."
+        }
+      }
+    },
+    {
+      "name": "set_user_profile",
+      "description": "Sets the user's dietary profile including allergies, intolerances, medical conditions, and nutrient limits for personalized food recommendations.",
+      "tags": ["profile", "allergies", "diet", "health", "preferences"],
+      "properties": {
+        "profile_name": {
+          "type": "string",
+          "description": "Name for this dietary profile."
+        },
+        "allergies": {
+          "type": "array",
+          "description": "List of allergens to avoid (e.g., ['milk', 'nuts', 'soy'])."
+        },
+        "intolerances": {
+          "type": "array",
+          "description": "List of intolerances (e.g., ['gluten', 'lactose'])."
+        },
+        "dietary_preferences": {
+          "type": "object",
+          "description": "Dietary preferences object with boolean flags (e.g., {'vegan': true, 'low_sugar': true})."
+        },
+        "medical_conditions": {
+          "type": "array",
+          "description": "List of medical conditions (e.g., ['diabetes', 'celiac_disease'])."
+        },
+        "avoid_additives": {
+          "type": "array",
+          "description": "List of additives to avoid (e.g., ['e951-aspartame'])."
+        },
+        "nutrient_limits": {
+          "type": "object",
+          "description": "Nutrient limits per 100g (e.g., {'sugars_100g': 5, 'salt_100g': 0.3})."
+        }
+      }
+    },
+    {
+      "name": "get_user_profile",
+      "description": "Gets the current user's dietary profile settings including allergies, preferences, and restrictions.",
+      "tags": ["profile", "settings", "diet", "health"],
+      "properties": {}
+    },
+    {
+      "name": "clear_user_profile",
+      "description": "Clears the current user's dietary profile and removes all saved preferences and restrictions.",
+      "tags": ["profile", "clear", "reset", "delete"],
+      "properties": {}
+    }
+  ]
+}
