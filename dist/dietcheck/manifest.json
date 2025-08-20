@@ -16,6 +16,17 @@
       }
     },
     {
+      "name": "search_safe_food_only",
+      "description": "Searches for food products that are safe for the user's dietary profile. Only returns products without allergens, within nutrient limits, and meeting dietary preferences. Requires a user profile to be set first.",
+      "tags": ["food", "nutrition", "search", "safe", "dietary", "profile", "allergen-free"],
+      "properties": {
+        "product_name": {
+          "type": "string",
+          "description": "The name of the food product to search for safe options (e.g., 'chocolate', 'bread', 'pizza')."
+        }
+      }
+    },
+    {
       "name": "get_product_nutrition",
       "description": "Gets detailed nutritional information for a specific product using its barcode. Includes safety analysis based on user's dietary profile if set.",
       "tags": ["nutrition", "barcode", "calories", "macros"],
