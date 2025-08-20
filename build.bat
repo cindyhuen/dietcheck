@@ -2,14 +2,8 @@
 @echo off
 setlocal
 
-:: Determine if we have Python available. Try 'py' launcher first (most reliable on Windows),
-:: then 'python' and 'python3'.
-py --version >nul 2>&1
-if ERRORLEVEL 1 goto try_python
-set PYTHON=py
-goto build
-
-:try_python
+:: Determine if we have 'python' or 'python3' in the path. On Windows, the
+:: Python executable is typically called 'python', so check that first.
 where /q python
 if ERRORLEVEL 1 goto python3
 set PYTHON=python
@@ -26,19 +20,20 @@ set VENV=.venv
 set DIST_DIR=dist
 set DIETCHECK_DIR=%DIST_DIR%\dietcheck
 if exist %VENV% (
-	echo Activating virtual environment...
 	call %VENV%\Scripts\activate.bat
 
 	:: Ensure dietcheck subfolder exists
 	if not exist "%DIETCHECK_DIR%" mkdir "%DIETCHECK_DIR%"
 
-	echo Building DietCheck plugin executable...
 	pyinstaller --onefile --name dietcheck-plugin --distpath "%DIETCHECK_DIR%" plugin.py
 	if exist manifest.json (
-		echo Copying manifest.json...
 		copy /y manifest.json "%DIETCHECK_DIR%\manifest.json"
+		echo manifest.json copied successfully.
 	) else (
-		echo Warning: manifest.json not found
+		echo {} > manifest.json
+		echo Created a blank manifest.json file.	
+		copy /y manifest.json "%DIETCHECK_DIR%\manifest.json"
+		echo manifest.json copied successfully.
 	)
 
 	call %VENV%\Scripts\deactivate.bat
@@ -50,15 +45,12 @@ if exist %VENV% (
 	echo 1. Copy the entire 'dietcheck' folder from the dist directory
 	echo 2. Paste it into: %%PROGRAMDATA%%\NVIDIA Corporation\nvtopps\rise\plugins
 	echo.
+	exit /b 0
 ) else (
-	echo Error: Virtual environment not found. Please run setup.bat first.
+	echo Please run setup.bat before attempting to build
 	exit /b 1
 )
-goto end
 
 :nopython
-echo Error: Python is not installed or not in PATH
-echo Please install Python 3.6 or higher and try again
+echo Python needs to be installed and in your path
 exit /b 1
-
-:end

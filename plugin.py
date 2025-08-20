@@ -9,6 +9,7 @@ import requests
 import logging
 import os
 import re
+import ast
 from ctypes import byref, windll, wintypes
 from typing import Optional, Dict, Any
 
@@ -31,6 +32,55 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s"
 )
+
+def safe_parse_parameter(param_value, expected_type):
+    """
+    Safely parse a parameter that might be a string representation of a Python object.
+    
+    Args:
+        param_value: The parameter value to parse
+        expected_type: The expected type (list, dict, str, etc.)
+    
+    Returns:
+        The parsed parameter value or the original if already correct type
+    """
+    if param_value is None:
+        return None
+    
+    # If already the correct type, return as-is
+    if isinstance(param_value, expected_type):
+        return param_value
+    
+    # If it's a string, try to parse it
+    if isinstance(param_value, str):
+        # Handle empty strings
+        if not param_value.strip():
+            return expected_type() if expected_type in [list, dict] else param_value
+        
+        try:
+            # Try JSON parsing first (handles "true"/"false" properly)
+            parsed = json.loads(param_value)
+            if isinstance(parsed, expected_type):
+                return parsed
+        except (json.JSONDecodeError, ValueError):
+            pass
+        
+        try:
+            # Try ast.literal_eval for Python literals
+            parsed = ast.literal_eval(param_value)
+            if isinstance(parsed, expected_type):
+                return parsed
+        except (ValueError, SyntaxError):
+            pass
+        
+        # If expected type is list/dict and we have a string, try to create empty one
+        if expected_type in [list, dict]:
+            logging.warning(f"Could not parse parameter '{param_value}' as {expected_type.__name__}, using empty {expected_type.__name__}")
+            return expected_type()
+    
+    # Return original value if parsing failed
+    logging.warning(f"Parameter '{param_value}' is not of expected type {expected_type.__name__}")
+    return param_value
 
 def save_user_profile():
     """Save the current user profile to a persistent file."""
@@ -129,7 +179,7 @@ def search_food_product(params: dict = None) -> dict:
     url = f"https://world.openfoodfacts.org/cgi/search.pl?search_terms={formatted_name}&search_simple=1&action=process&json=1"
     
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=80)
         if response.status_code == 200:
             search_data = response.json()
             
@@ -289,7 +339,7 @@ def search_food_product(params: dict = None) -> dict:
                 # Analyze product safety against user profile
                 is_safe, warnings, recommendations = analyze_product_safety(product)
                 
-                result_line = f"{len(filtered_results)+1}. {product_name_result} ({brand}) - URL: https://world.openfoodfacts.org/product/{barcode}"
+                result_line = f"{len(filtered_results)+1}. **{product_name_result} ({brand})**\nhttps://world.openfoodfacts.org/product/{barcode}"
                 
                 # Add safety indicators
                 if not is_safe:
@@ -500,40 +550,40 @@ def get_product_nutrition(params: dict = None) -> dict:
             nutrition_parts = []
             
             if energy_kcal != 'N/A':
-                nutrition_parts.append(f"Energy: {energy_kcal} kcal/100g")
+                nutrition_parts.append(f"\n• Energy: {energy_kcal} kcal/100g")
             if fat != 'N/A':
-                nutrition_parts.append(f"Fat: {fat}g")
+                nutrition_parts.append(f"\n• Fat: {fat}g")
             if sugar != 'N/A':
-                nutrition_parts.append(f"Sugar: {sugar}g")
+                nutrition_parts.append(f"\n• Sugar: {sugar}g")
             if protein != 'N/A':
-                nutrition_parts.append(f"Protein: {protein}g")
+                nutrition_parts.append(f"\n• Protein: {protein}g")
             if salt != 'N/A':
-                nutrition_parts.append(f"Salt: {salt}g")
+                nutrition_parts.append(f"\n• Salt: {salt}g")
             if fiber != 'N/A':
-                nutrition_parts.append(f"Fiber: {fiber}g")
+                nutrition_parts.append(f"\n• Fiber: {fiber}g")
             
             if nutrition_parts:
                 nutrition_info = ", ".join(nutrition_parts)
-                message = f"{product_name} ({brand}): {nutrition_info}"
+                message = f"**{product_name} ({brand})** {nutrition_info}"
             else:
-                message = f"{product_name} ({brand}): Nutritional information not available"
+                message = f"**{product_name} ({brand}): Nutritional information not available"
             
             # Add safety analysis based on user profile
             is_safe, warnings, recommendations = analyze_product_safety(product)
             
             if warnings or recommendations:
-                message += "\n\n🔍 DIETARY ANALYSIS:"
+                message += "\n• 🔍 DIETARY ANALYSIS:"
                 for warning in warnings:
-                    message += f"\n{warning}"
+                    message += f"\n• {warning}"
                 for recommendation in recommendations:
-                    message += f"\n{recommendation}"
+                    message += f"\n• {recommendation}"
                 
                 if not is_safe:
-                    message += "\n\n❌ This product is NOT RECOMMENDED for your dietary profile."
+                    message += "\n• ❌ This product is NOT RECOMMENDED for your dietary profile."
                 elif warnings:
-                    message += "\n\n⚠️ Please review the warnings above before consuming."
+                    message += "\n• ⚠️ Please review the warnings above before consuming."
                 else:
-                    message += "\n\n✅ This product appears suitable for your dietary profile."
+                    message += "\n• ✅ This product appears suitable for your dietary profile."
             
             logging.info(f"Nutritional data retrieved successfully for barcode: {barcode}")
             return {
@@ -564,15 +614,36 @@ def set_user_profile(params: dict = None) -> dict:
         logging.error("Profile data is required in set_user_profile")
         return {"success": False, "message": "Profile data is required."}
     
-    USER_PROFILE = params
-    profile_name = params.get("profile_name", "Custom Profile")
-    save_user_profile()
-    
-    logging.info(f"User profile set and saved: {profile_name}")
-    return {
-        "success": True,
-        "message": f"Profile '{profile_name}' has been set and saved successfully. Dietary restrictions and preferences will now be applied to all food searches automatically."
-    }
+    # Parse and validate parameters
+    try:
+        parsed_profile = {}
+        
+        # Parse each parameter with proper type checking
+        parsed_profile["profile_name"] = params.get("profile_name", "Custom Profile")
+        parsed_profile["allergies"] = safe_parse_parameter(params.get("allergies"), list)
+        parsed_profile["intolerances"] = safe_parse_parameter(params.get("intolerances"), list)
+        parsed_profile["medical_conditions"] = safe_parse_parameter(params.get("medical_conditions"), list)
+        parsed_profile["dietary_preferences"] = safe_parse_parameter(params.get("dietary_preferences"), dict)
+        parsed_profile["avoid_additives"] = safe_parse_parameter(params.get("avoid_additives"), list)
+        parsed_profile["nutrient_limits"] = safe_parse_parameter(params.get("nutrient_limits"), dict)
+        
+        # Only add non-None values to the profile
+        USER_PROFILE = {k: v for k, v in parsed_profile.items() if v is not None}
+        
+        profile_name = USER_PROFILE.get("profile_name", "Custom Profile")
+        save_user_profile()
+        
+        logging.info(f"User profile set and saved: {profile_name}")
+        return {
+            "success": True,
+            "message": f"Profile '{profile_name}' has been set and saved successfully. Dietary restrictions and preferences will now be applied to all food searches automatically."
+        }
+    except Exception as e:
+        logging.error(f"Error setting user profile: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Error setting user profile: {str(e)}"
+        }
 
 def get_user_profile(params: dict = None) -> dict:
     """Get the current user profile settings."""
@@ -601,15 +672,15 @@ def get_user_profile(params: dict = None) -> dict:
     if medical_conditions:
         summary += f"\n🏥 Medical Conditions: {', '.join(medical_conditions)}"
     
-    if dietary_preferences:
+    if dietary_preferences and isinstance(dietary_preferences, dict):
         active_prefs = [k for k, v in dietary_preferences.items() if v]
         if active_prefs:
             summary += f"\n🥗 Dietary Preferences: {', '.join(active_prefs)}"
     
-    if avoid_additives:
+    if avoid_additives and isinstance(avoid_additives, list):
         summary += f"\n🧪 Avoid Additives: {', '.join(avoid_additives)}"
     
-    if nutrient_limits:
+    if nutrient_limits and isinstance(nutrient_limits, dict):
         limits = [f"{nutrient}: {limit}" for nutrient, limit in nutrient_limits.items()]
         if limits:
             summary += f"\n📊 Nutrient Limits: {', '.join(limits)}"
@@ -753,12 +824,13 @@ def analyze_product_safety(product_data: dict, strict_mode: bool = False) -> tup
     nutrient_limits = USER_PROFILE.get("nutrient_limits", {})
     nutriments = product_data.get("nutriments", {})
     
-    for nutrient, limit in nutrient_limits.items():
-        value = nutriments.get(nutrient, nutriments.get(nutrient.replace("_100g", ""), 0))
-        if isinstance(value, (int, float)) and value > limit:
-            warnings.append(f"⚠️ HIGH {nutrient.replace('_100g', '').upper()}: {value}g (limit: {limit}g)")
-            if strict_mode:
-                is_safe = False
+    if isinstance(nutrient_limits, dict):
+        for nutrient, limit in nutrient_limits.items():
+            value = nutriments.get(nutrient, nutriments.get(nutrient.replace("_100g", ""), 0))
+            if isinstance(value, (int, float)) and value > limit:
+                warnings.append(f"⚠️ HIGH {nutrient.replace('_100g', '').upper()}: {value}g (limit: {limit}g)")
+                if strict_mode:
+                    is_safe = False
     
     # Check dietary preferences
     dietary_prefs = USER_PROFILE.get("dietary_preferences", {})
@@ -989,7 +1061,7 @@ def search_safe_food_only(params: dict = None) -> dict:
                     product_name_result = ''.join(c for c in product_name_result if c.isprintable() and c.isascii()) if product_name_result else 'Unknown Product'
                     brand = ''.join(c for c in brand if c.isprintable() and c.isascii()) if brand else 'Unknown Brand'
                     
-                    result_line = f"{len(safe_products)+1}. {product_name_result} ({brand}) - URL: https://world.openfoodfacts.org/product/{barcode} ✅ VEGAN SAFE"
+                    result_line = f"{len(safe_products)+1}. **{product_name_result} ({brand})**\nhttps://world.openfoodfacts.org/product/{barcode} ✅ VEGAN SAFE"
                     safe_products.append(result_line)
                     safe_product_barcodes.append(barcode)
                     
@@ -1014,7 +1086,7 @@ def search_safe_food_only(params: dict = None) -> dict:
                     product_name_result = ''.join(c for c in product_name_result if c.isprintable() and c.isascii()) if product_name_result else 'Unknown Product'
                     brand = ''.join(c for c in brand if c.isprintable() and c.isascii()) if brand else 'Unknown Brand'
                     
-                    result_line = f"{len(safe_products)+1}. {product_name_result} ({brand}) - URL: https://world.openfoodfacts.org/product/{barcode} ✅ VEGETARIAN SAFE"
+                    result_line = f"{len(safe_products)+1}. **{product_name_result} ({brand})**\nhttps://world.openfoodfacts.org/product/{barcode} ✅ VEGETARIAN SAFE"
                     safe_products.append(result_line)
                     safe_product_barcodes.append(barcode)
                     
@@ -1050,7 +1122,7 @@ def search_safe_food_only(params: dict = None) -> dict:
                         product_name_result = ''.join(c for c in product_name_result if c.isprintable() and c.isascii()) if product_name_result else 'Unknown Product'
                         brand = ''.join(c for c in brand if c.isprintable() and c.isascii()) if brand else 'Unknown Brand'
                         
-                        result_line = f"{len(safe_products)+1}. {product_name_result} ({brand}) - url: https://world.openfoodfacts.org/product/{barcode} ✅ SAFE"
+                        result_line = f"{len(safe_products)+1}. **{product_name_result} ({brand})**\nhttps://world.openfoodfacts.org/product/{barcode} ✅ SAFE"
                         safe_products.append(result_line)
                         safe_product_barcodes.append(barcode)
                         
@@ -1083,7 +1155,7 @@ def search_safe_food_only(params: dict = None) -> dict:
         
         message += f"\n💡 Try: \n- Use regular search to see products with warnings\n- Try different/broader search terms\n- Use analyze_product to check specific barcodes\n- Consider adjusting your dietary profile if needed"
         
-        message += f"\nNote: hese results are for reference only. Please check the actual product packaging for the most accurate information."
+        message += f"\n\nNote: These results are for reference only. Please check the actual product packaging for the most accurate information."
 
 
         logging.info(f"No safe products found for: {product_name}")
@@ -1115,7 +1187,7 @@ def search_safe_food_only(params: dict = None) -> dict:
         profile_summary.append("Vegan-friendly")
     if dietary_prefs.get("vegetarian"):
         profile_summary.append("Vegetarian-friendly")
-    if nutrient_limits:
+    if nutrient_limits and isinstance(nutrient_limits, dict):
         limits_text = []
         for nutrient, limit in nutrient_limits.items():
             nutrient_clean = nutrient.replace("_100g", "")
@@ -1124,7 +1196,9 @@ def search_safe_food_only(params: dict = None) -> dict:
             profile_summary.append(f"Within limits: {', '.join(limits_text)}")
     
     if profile_summary:
-        message += "✅" + "\n".join(profile_summary)
+        message += "✅ " + "\n".join(profile_summary)
+    
+    message += f"\n\nNote: These results are for reference only. Please check the actual product packaging for the most accurate information."
     
     # Generate URL for the first safe product (if any)
     response_dict = {
@@ -1168,7 +1242,10 @@ def main():
     while True:
         command = read_command()
         if command is None:
-            logging.error('Error reading command')
+            logging.error('Error reading command - skipping and continuing')
+            # Send an error response to prevent the caller from hanging
+            error_response = {"success": False, "message": "Failed to parse command"}
+            write_response(error_response)
             continue
         
         tool_calls = command.get("tool_calls", [])
@@ -1238,11 +1315,80 @@ def read_command() -> dict | None:
                 break
 
         retval = ''.join(chunks)
-        return json.loads(retval)
+        
+        # Clean up the JSON string before parsing
+        retval = retval.strip()
+        
+        # Handle potential multiple JSON objects concatenated together
+        def extract_first_json(data):
+            """Extract the first complete JSON object from potentially concatenated data"""
+            if not data:
+                return None
+                
+            brace_count = 0
+            in_string = False
+            escape_next = False
+            
+            for i, char in enumerate(data):
+                if escape_next:
+                    escape_next = False
+                    continue
+                    
+                if char == '\\' and in_string:
+                    escape_next = True
+                    continue
+                    
+                if char == '"' and not escape_next:
+                    in_string = not in_string
+                    continue
+                    
+                if not in_string:
+                    if char == '{':
+                        brace_count += 1
+                    elif char == '}':
+                        brace_count -= 1
+                        if brace_count == 0:
+                            # Found the end of the first JSON object
+                            return data[:i+1]
+            
+            # If we didn't find a complete JSON object, return the whole string
+            return data
+        
+        # Extract only the first JSON object if multiple are present
+        first_json = extract_first_json(retval)
+        if first_json != retval:
+            logging.warning(f'Multiple JSON objects detected, extracted first one. Original length: {len(retval)}, extracted: {len(first_json)}')
+        
+        # Try to parse the JSON with better error handling
+        try:
+            return json.loads(first_json)
+        except json.JSONDecodeError as json_err:
+            # Log first 500 characters of problematic JSON for debugging
+            json_preview = first_json[:500] + "..." if len(first_json) > 500 else first_json
+            logging.error(f'JSON decode error at position {json_err.pos}: {json_err.msg}')
+            logging.error(f'Received invalid JSON (first 500 chars): {json_preview}')
+            
+            # Try to fix common JSON issues
+            try:
+                import re
+                cleaned_json = first_json
+                
+                # Fix unescaped newlines within JSON string values
+                # This pattern looks for unescaped newlines that are inside quotes
+                def fix_newlines_in_strings(match):
+                    content = match.group(1)
+                    # Replace unescaped newlines with \\n
+                    content = content.replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
+                    return f'"{content}"'
+                
+                # Find all string values in the JSON and fix newlines within them
+                cleaned_json = re.sub(r'"([^"]*(?:\\.[^"]*)*)"', fix_newlines_in_strings, cleaned_json)
+                
+                return json.loads(cleaned_json)
+            except Exception as e:
+                logging.error(f'Failed to clean and parse JSON: {str(e)}')
+                return None
 
-    except json.JSONDecodeError:
-        logging.error(f'Received invalid JSON: {retval}')
-        return None
     except Exception as e:
         logging.error(f'Exception in read_command(): {str(e)}')
         return None
@@ -1254,7 +1400,8 @@ def write_response(response: Response) -> None:
         STD_OUTPUT_HANDLE = -11
         pipe = windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
 
-        json_message = json.dumps(response) + '<<END>>'
+        # Use ensure_ascii=False to preserve Unicode characters like emojis
+        json_message = json.dumps(response, ensure_ascii=False) + '<<END>>'
         message_bytes = json_message.encode('utf-8')
         message_len = len(message_bytes)
 
